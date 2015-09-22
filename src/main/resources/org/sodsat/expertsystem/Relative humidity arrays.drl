@@ -1,0 +1,47 @@
+package org.sodsat.expertsystem;
+
+import java.util.ArrayList;
+
+rule "Pythium blight most probable"
+salience 0
+when
+	$fungiChecked : Fungi(fungiSpecies == "PythiumBlight")
+	$rhOver : ArrayList( size > 15 ) from collect (
+		Number(doubleValue > 90) from $fungiChecked.getAirRHvalues()
+	)
+then
+	$fungiChecked.setAirRH(0.99);
+end
+
+rule "Pythium blight probable"
+salience 50
+when
+	$fungiChecked : Fungi(fungiSpecies == "PythiumBlight")
+	$rhOver : ArrayList( size > 10 ) from collect (
+		Number(doubleValue > 90) from $fungiChecked.getAirRHvalues()
+	)
+then
+	$fungiChecked.setAirTemp(0.9);
+end
+
+rule "Brown patch most probable"
+salience 0
+when
+	$fungiChecked : Fungi(fungiSpecies == "BrownPatch")
+	$rhOver : ArrayList( size > 8 ) from collect (
+		Number(doubleValue > 95) from $fungiChecked.getAirRHvalues()
+	)
+then
+	$fungiChecked.setAirTemp(0.99);
+end
+
+rule "Brown patch probable"
+salience 50
+when
+	$fungiChecked : Fungi(fungiSpecies == "PythiumBlight")
+	$rhOver : ArrayList( size > 24 ) from collect (
+		Number(doubleValue > 75) from $fungiChecked.getAirRHvalues()
+	)
+then
+	$fungiChecked.setAirTemp(0.9);
+end

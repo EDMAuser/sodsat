@@ -1,0 +1,51 @@
+<scenario>
+  <name>Leaf Wetness Test Scenario (Red Thread).scenario</name>
+  <maxRuleFirings>100000</maxRuleFirings>
+  <globals/>
+  <fixtures>
+    <fact-data>
+      <type>Fungi</type>
+      <fieldData>
+        <field-data>
+          <name>fungiSpecies</name>
+          <value>RedThread</value>
+          <nature>4</nature>
+        </field-data>
+      </fieldData>
+      <name>fungiTested</name>
+      <isModify>false</isModify>
+    </fact-data>
+    <org.drools.workbench.models.testscenarios.shared.CallMethod>
+      <state>1</state>
+      <methodName>initLeafWetness</methodName>
+      <variable>fungiTested</variable>
+      <callFieldValues/>
+    </org.drools.workbench.models.testscenarios.shared.CallMethod>
+    <execution-trace>
+      <executionTimeResult>8</executionTimeResult>
+      <numberOfRulesFired>2</numberOfRulesFired>
+    </execution-trace>
+    <expect-fact>
+      <fieldValues>
+        <expect-field>
+          <fieldName>leafWetness</fieldName>
+          <expected>1.3</expected>
+          <actualResult></actualResult>
+          <successResult>true</successResult>
+          <explanation>[fungiTested] field [leafWetness] was [1.3].</explanation>
+          <operator>==</operator>
+          <nature>1</nature>
+        </expect-field>
+      </fieldValues>
+      <name>fungiTested</name>
+      <anonymous>false</anonymous>
+    </expect-fact>
+  </fixtures>
+  <lastRunResult>2015-07-21 08:30:25.828 UTC</lastRunResult>
+  <rules/>
+  <inclusive>false</inclusive>
+  <packageName>org.sodsat.expertsystem</packageName>
+  <imports>
+    <imports/>
+  </imports>
+</scenario>

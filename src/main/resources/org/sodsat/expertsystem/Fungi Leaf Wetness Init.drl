@@ -1,0 +1,58 @@
+package org.sodsat.expertsystem;
+
+import java.util.ArrayList;
+
+rule "Brown patch most probable (Leaf wetness)"
+salience 0
+when
+	$fungiChecked : Fungi(fungiSpecies == "BrownPatch")
+	$nHours : ArrayList( size > 6 ) from collect (
+		Number(doubleValue == 100) from $fungiChecked.getLeafWetnessValues()
+	)
+then
+	$fungiChecked.setLeafWetness(0.99);
+end
+
+rule "Brown patch probable (Leaf wetness)"
+salience 50
+when
+	$fungiChecked : Fungi(fungiSpecies == "BrownPatch")
+	$nHours : ArrayList( size >= 3 && size <= 6 ) from collect (
+		Number(doubleValue == 100) from $fungiChecked.getLeafWetnessValues()
+	)
+then
+	$fungiChecked.setLeafWetness(0.85);
+end
+
+rule "Brown patch default (Leaf wetness)"
+salience 100
+when
+	$fungiChecked : Fungi(fungiSpecies == "BrownPatch")
+	
+then
+	$fungiChecked.setLeafWetness(0.70);
+end
+
+rule "Red thread most probable(Leaf wetness)"
+salience 0
+when
+	$fungiChecked : Fungi(fungiSpecies == "RedThread")
+	$filteredList : ArrayList(size > 7) from accumulate (
+		$day: DailyReadings($readings: readingValues) from $fungiChecked.getDailyLeafWetnessReadings()
+		and
+		$hours: ArrayList(size > 10) from collect (
+			Number(doubleValue == 100) from $readings
+		);
+		collectList($day)
+	)
+then
+	$fungiChecked.setLeafWetness(1.30);
+end
+
+rule "Red thread default (Leaf wetness)"
+salience 100
+when
+	$fungiChecked : Fungi(fungiSpecies == "RedThread")
+then
+	$fungiChecked.setLeafWetness(1.00);
+end

@@ -1,0 +1,14 @@
+package org.sodsat.expertsystem;
+
+import java.util.ArrayList;
+
+rule "Count night temperature above a certain threshold"
+salience 0
+when
+	$fungiChecked : Fungi(fungiSpecies == "PythiumBlight", daytimeMaxTemp > 28.0)
+	$nightTempsOver : ArrayList( size > 12 ) from collect (
+		Number(doubleValue > 20) from $fungiChecked.getNightTimeTempValues()
+	)
+then
+	$fungiChecked.setAirTemp(0.90);
+end

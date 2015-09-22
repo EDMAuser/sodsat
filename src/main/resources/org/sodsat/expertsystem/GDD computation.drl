@@ -1,0 +1,81 @@
+package org.sodsat.expertsystem;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+
+rule "GDD computation"
+salience -10
+when
+	$weedChecked: Weeds(
+		weedSpecies in ("crabgrass", "foxtail", "goosegrass", "whiteClover", "dandelion")
+	)
+	$gdd: Number() from accumulate (
+		DailyReadings($readings: readingValues) from $weedChecked.getDailyAirTemperature(),
+		init( double gDD = 0.0;),
+		action(
+				double basalTemp = ((Weeds)$weedChecked).getBasalTemp();
+				for (Object currentDay : $weedChecked.getDailyAirTemperature())
+				{
+					List<Double> readings = ((DailyReadings)currentDay).getReadingValues();
+					Collections.sort(readings); 
+					double max = (Double)readings.get(readings.size() - 1);
+					double min = (Double)readings.get(0);
+					double avg = (max + min) / 2;
+					double gDDdiff = avg - basalTemp;
+					gDD += gDDdiff ;
+				}
+		),
+		result( new Double(gDD) )
+	)
+then
+	$weedChecked.setGdd((java.lang.Double)$gdd.doubleValue());
+end
+
+rule "Soil Average Temperature Computation"
+salience -10
+when
+	$weedChecked: Weeds(
+		weedSpecies == "annualBluegrass"
+	)
+	$soilAvgTmp: Number() from accumulate (
+		DailyReadings() from $weedChecked.getDailySoilTemperature(),
+		init(double soilAvgTmp = 0.0;),
+		action(
+			List<DailyReadings> dailyReadings = ((Weeds)$weedChecked).getDailySoilTemperature();
+			DailyReadings lastDay = (DailyReadings)dailyReadings.get(dailyReadings.size() - 1);
+			List<Double> readings = lastDay.getReadingValues();
+			Collections.sort(readings);
+			double min = (Double)readings.get(0);
+			double max = (Double)readings.get(readings.size() - 1);
+			soilAvgTmp = (max + min) / 2;
+		),
+		result( new Double(soilAvgTmp) )
+	)
+then
+	$weedChecked.setSoilAvgTemp($soilAvgTmp.doubleValue());
+end
+
+rule "Air Average Temperature Computation"
+salience -10
+when
+	$weedChecked: Weeds(
+		weedSpecies in ("annualBluegrass", "daisy")
+	)
+	$airAvgTmp: Number() from accumulate (
+		DailyReadings() from $weedChecked.getDailyAirTemperature(),
+		init(double airAvgTmp = 0.0;),
+		action(
+			List<DailyReadings> dailyReadings = ((Weeds)$weedChecked).getDailyAirTemperature();
+			DailyReadings lastDay = (DailyReadings)dailyReadings.get(dailyReadings.size() - 1);
+			List<Double> readings = lastDay.getReadingValues();
+			Collections.sort(readings);
+			double min = (Double)readings.get(0);
+			double max = (Double)readings.get(readings.size() - 1);
+			airAvgTmp = (max + min) / 2;
+		),
+		result( new Double(airAvgTmp) )
+	)
+then
+	$weedChecked.setAirAvgTemp($airAvgTmp.doubleValue());
+end

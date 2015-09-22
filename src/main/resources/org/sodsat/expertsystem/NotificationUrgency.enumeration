@@ -1,0 +1,3 @@
+'Irrigation.irrigationAlarm' : ['Alarm', 'Warning', 'None']
+'Weeds.weedAlarm' : ['Alarm', 'Warning', 'None']
+'Fungi.fungiAlarm' : ['Alarm', 'Warning', 'None']

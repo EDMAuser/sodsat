@@ -1,0 +1,55 @@
+package org.sodsat.expertsystem;
+
+rule "Time to irrigate computation (with threshold)"
+salience -100
+when
+	$irrigation: Irrigation()
+then
+	System.out.println("Parameters to compute the time to irrigate with threshold");
+	System.out.println("=============================================");
+	System.out.println("Soil Water content (WC) = " + $irrigation.getSoilWaterContent());
+	System.out.println("Root Depth (RD) = " + $irrigation.getRootDepth());
+	System.out.println("Field Capacity (FC) = " + $irrigation.getSoilWaterCapacity());
+	System.out.println("Wilting Point (WP) = " + $irrigation.getSoilWiltingPoint());
+	System.out.println("Water Content Threshold (WCT) = " + $irrigation.getConfidenceThreshold());
+	System.out.println("Evapotranspiration (ETo) = " + $irrigation.geteTo());
+	System.out.println("Crop coefficient (Kc) = " + $irrigation.getKc());
+	System.out.println("=============================================");
+	double h = (($irrigation.getSoilWaterContent() / 100) * $irrigation.getRootDepth() - ($irrigation.getRootDepth() * ($irrigation.getSoilWaterCapacity() - ($irrigation.getSoilWaterCapacity() - $irrigation.getSoilWiltingPoint()) * ($irrigation.getConfidenceThreshold() / 100)))) / ($irrigation.geteTo() * $irrigation.getKc());
+	$irrigation.setTimeBeforeIrrigationThreshold(h);
+	System.out.println("Time to reintegrate the water (in hours) = " + $irrigation.getTimeBeforeIrrigationThreshold());
+end
+
+rule "Time to irrigate computation (without threshold)"
+salience -100
+when
+	$irrigation: Irrigation()
+then
+	System.out.println("Parameters to compute the time to irrigate without threshold");
+	System.out.println("=============================================");
+	System.out.println("Soil Water content (WC) = " + $irrigation.getSoilWaterContent());
+	System.out.println("Root Depth (RD) = " + $irrigation.getRootDepth());
+	System.out.println("Wilting Point (WP) = " + $irrigation.getSoilWiltingPoint());
+	System.out.println("Evapotranspiration (ETo) = " + $irrigation.geteTo());
+	System.out.println("Crop coefficient (Kc) = " + $irrigation.getKc());
+	System.out.println("=============================================");
+	double h = (($irrigation.getSoilWaterContent() / 100) * $irrigation.getRootDepth() - ($irrigation.getRootDepth() * ($irrigation.getSoilWiltingPoint() / 100))) / ($irrigation.geteTo() * $irrigation.getKc());
+	$irrigation.setTimeBeforeIrrigation(h);
+	System.out.println("Time to reintegrate the water (in hours) = " + $irrigation.getTimeBeforeIrrigation());
+end
+
+rule "Water to reintegrate"
+salience -100
+when
+	$irrigation: Irrigation()
+then
+	System.out.println("Parameters to compute amount of water to reintegrate");
+	System.out.println("===========================================");
+	System.out.println("Root Depth (RD) = " + $irrigation.getRootDepth());
+	System.out.println("Field Capacity (FC) = " + $irrigation.getSoilWaterCapacity());
+	System.out.println("Water Content (WC) = " + $irrigation.getSoilWaterContent());
+	System.out.println("===========================================");
+	double l = (($irrigation.getRootDepth() * ($irrigation.getSoilWaterCapacity() / 100)) - ($irrigation.getRootDepth() * ($irrigation.getSoilWaterContent() / 100))) * 1000;
+	$irrigation.setWaterToReintegrate(l);
+	System.out.println("Amount of water to reintegrate (in liters) = " + $irrigation.getWaterToReintegrate());
+end
